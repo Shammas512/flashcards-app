@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flashcards/Flashcard_Screen/flash_seen.dart';
 import 'package:flashcards/Flashcard_Screen/flash_ui.dart';
 import 'package:flashcards/GlobalWidgets/gappbar.dart';
@@ -6,9 +8,43 @@ import 'package:flashcards/Provider/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
-class Flashcarda extends StatelessWidget {
-  const Flashcarda({super.key});
+class Flashcarda extends StatefulWidget {
+  final String id;
+  Flashcarda({super.key, required this.id});
+
+  @override
+  State<Flashcarda> createState() => _FlashcardaState();
+}
+
+class _FlashcardaState extends State<Flashcarda> {
+  String name = "";
+
+  String email = "";
+
+  Future getapi() async {
+    final responce = await http.get(Uri.parse(
+        "https://crudcrud.com/api/cedfb5625fa0450d8e20487f24dc5db6/unicorns/${widget.id}"));
+    var data = jsonDecode(responce.body);
+    if (responce.statusCode == 200) {
+      print("ok");
+    } else {
+      print("Sorry");
+    }
+    print(data["name"]);
+    setState(() {
+      name = data["name"];
+      email = data["email"];
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getapi();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +68,11 @@ class Flashcarda extends StatelessWidget {
                     backgroundColor: Colors.red,
                   ),
                   title: Text(
-                    "Anonymous",
+                    name,
                     style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                   ),
                   subtitle: Text(
-                    "Anonymous@gmail.com",
+                    email,
                     style: TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
                   ),
                 ),
@@ -79,6 +115,7 @@ class Flashcarda extends StatelessWidget {
                         );
                       }),
                 ),
+                // ElevatedButton(onPressed: ()=> getapi(), child: Icon(Icons.cabin))
               ],
             ),
           );
@@ -86,7 +123,10 @@ class Flashcarda extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.to(FlashUi() , transition: Transition.fade,duration:const  Duration(milliseconds: 600 ));
+        
+          Get.to(FlashUi(),
+              transition: Transition.fade,
+              duration: const Duration(milliseconds: 600));
           // Navigator.push(
           //     context, MaterialPageRoute(builder: (context) => FlashUi()));
         },
