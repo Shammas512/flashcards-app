@@ -9,6 +9,7 @@ class FlashSeen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: Gappbar(),
       body: Padding(
         padding: EdgeInsets.all(20),
